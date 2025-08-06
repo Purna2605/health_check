@@ -116,8 +116,11 @@ def classify_risk_route():
 
 @app.route("/generate-report", methods=["POST"])
 def generate_report_route():
-    data = request.json
     try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+            
         name = data.get("name", "N/A")
         age = data.get("age", "N/A")
         risk_level = data.get("risk_level", "Low")
@@ -126,6 +129,14 @@ def generate_report_route():
         bmi = data.get("bmi")
         mental_wellness = data.get("mental_wellness")
         vital_signs = data.get("vital_signs")
+        
+        # Ensure symptoms and diagnoses are lists
+        if not isinstance(symptoms, list):
+            symptoms = []
+        if not isinstance(diagnoses, list):
+            diagnoses = []
+        
+        print(f"Generating PDF for {name} with {len(symptoms)} symptoms and {len(diagnoses)} diagnoses")
         
         file_path = generate_pdf(
             name=name,
@@ -137,9 +148,16 @@ def generate_report_route():
             mental_wellness=mental_wellness,
             vital_signs=vital_signs
         )
-        return send_file(file_path, as_attachment=True, download_name="health_report.pdf")
+        
+        if not os.path.exists(file_path):
+            return jsonify({"error": "PDF file was not created"}), 500
+            
+        return send_file(file_path, as_attachment=True, download_name="comprehensive_health_report.pdf")
+    except ImportError as e:
+        return jsonify({"error": "PDF library not available. Please install fpdf2: pip install fpdf2"}), 500
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"PDF generation error: {str(e)}")
+        return jsonify({"error": f"Failed to generate PDF: {str(e)}"}), 500
 
 @app.route("/find-hospitals", methods=["POST"])
 def find_hospitals_route():
