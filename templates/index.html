@@ -3,193 +3,773 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Health Check App</title>
+  <title>HealthCheck Pro - Your Personal Health Assistant</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f2f2f2;
+    :root {
+      --primary-color: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --danger-color: #ef4444;
+      --warning-color: #f97316;
+      --success-color: #22c55e;
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --surface-hover: #f1f5f9;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-light: #94a3b8;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --border-radius: 12px;
+      --border-radius-lg: 16px;
     }
-    .section {
-      background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    input, select {
-      display: block;
-      margin: 10px 0;
-      padding: 8px;
-      width: 100%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
-    .result {
-      font-weight: bold;
-      margin-top: 10px;
-      white-space: pre-line;
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--text-primary);
+      line-height: 1.6;
     }
-    .bar {
-      height: 20px;
-      width: 100%;
-      background: #eee;
-      border-radius: 10px;
-      margin: 10px 0;
-      position: relative;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
     }
-    .bar-fill {
-      height: 100%;
-      border-radius: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 10px;
-      border: none;
-      background-color: #007bff;
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
       color: white;
-      border-radius: 5px;
-      cursor: pointer;
     }
-    button:hover {
-      background-color: #0056b3;
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .checkbox-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin: 15px 0;
+
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 300;
     }
-    .checkbox-container label {
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border-radius: var(--border-radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    .card-header {
       display: flex;
       align-items: center;
-      margin: 5px 0;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
     }
-    .checkbox-container input[type="checkbox"] {
+
+    .card-header i {
+      font-size: 2rem;
+      margin-right: 1rem;
+      color: var(--primary-color);
+    }
+
+    .card-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: var(--surface);
+      color: var(--text-primary);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+    }
+
+    input:hover, select:hover {
+      border-color: var(--primary-dark);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.875rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn i {
+      margin-right: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--secondary-color), #059669);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent-color), #d97706);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-accent:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Checkbox Grid */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background: var(--surface-hover);
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .checkbox-item:hover {
+      border-color: var(--primary-color);
+      background: rgb(37 99 235 / 0.05);
+    }
+
+    .checkbox-item input[type="checkbox"] {
       width: auto;
-      margin-right: 8px;
+      margin-right: 0.75rem;
+      transform: scale(1.2);
     }
-    .error {
-      color: red;
-      font-weight: bold;
+
+    .checkbox-item.checked {
+      border-color: var(--primary-color);
+      background: rgb(37 99 235 / 0.1);
     }
-    .success {
-      color: green;
-      font-weight: bold;
+
+    /* Progress Bars */
+    .progress-container {
+      margin: 1rem 0;
     }
-    .loading {
-      color: #007bff;
-      font-style: italic;
+
+    .progress-label {
+      display: flex;
+      justify-content: between;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Results */
+    .result {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      white-space: pre-line;
+      border-left: 4px solid var(--primary-color);
+      background: rgb(37 99 235 / 0.05);
+    }
+
+    .result.success {
+      border-left-color: var(--success-color);
+      background: rgb(34 197 94 / 0.05);
+      color: #166534;
+    }
+
+    .result.warning {
+      border-left-color: var(--warning-color);
+      background: rgb(249 115 22 / 0.05);
+      color: #9a3412;
+    }
+
+    .result.error {
+      border-left-color: var(--danger-color);
+      background: rgb(239 68 68 / 0.05);
+      color: #991b1b;
+    }
+
+    .result.loading {
+      border-left-color: var(--accent-color);
+      background: rgb(245 158 11 / 0.05);
+      color: #92400e;
+    }
+
+    /* Responsive Grid */
+    .grid {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    /* Range Input Styling */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 4px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+    .card:nth-child(5) { animation-delay: 0.5s; }
+    .card:nth-child(6) { animation-delay: 0.6s; }
+    .card:nth-child(7) { animation-delay: 0.7s; }
+
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .card {
+        padding: 1.5rem;
+      }
+      
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Status Indicators */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin: 0.25rem;
+    }
+
+    .status-low {
+      background: rgb(34 197 94 / 0.1);
+      color: #166534;
+      border: 1px solid rgb(34 197 94 / 0.2);
+    }
+
+    .status-medium {
+      background: rgb(249 115 22 / 0.1);
+      color: #9a3412;
+      border: 1px solid rgb(249 115 22 / 0.2);
+    }
+
+    .status-high {
+      background: rgb(239 68 68 / 0.1);
+      color: #991b1b;
+      border: 1px solid rgb(239 68 68 / 0.2);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--text-primary);
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.875rem;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="fas fa-heartbeat"></i> HealthCheck Pro</h1>
+      <p>Your comprehensive personal health assessment platform</p>
+    </header>
 
-  <div class="section">
-    <h2>👤 Personal Info</h2>
-    <input type="text" id="name" placeholder="Name" />
-    <input type="number" id="age" placeholder="Age" />
-    <input type="number" id="height" placeholder="Height (cm)" oninput="calculateBMI()"/>
-    <input type="number" id="weight" placeholder="Weight (kg)" oninput="calculateBMI()"/>
-    <div class="result" id="bmiResult"></div>
-  </div>
+    <div class="grid grid-2">
+      <!-- Personal Information Card -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-user-md"></i>
+          <h2>Personal Information</h2>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Enter your full name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="age">Age</label>
+          <input type="number" id="age" placeholder="Enter your age" min="1" max="120" />
+        </div>
+        <div class="grid grid-2">
+          <div class="form-group">
+            <label class="form-label" for="height">Height (cm)</label>
+            <input type="number" id="height" placeholder="170" oninput="calculateBMI()" min="50" max="300" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="weight">Weight (kg)</label>
+            <input type="number" id="weight" placeholder="70" oninput="calculateBMI()" min="20" max="300" />
+          </div>
+        </div>
+        <div class="result" id="bmiResult"></div>
+      </div>
 
-  <div class="section">
-    <h2>🤒 Select Your Symptoms</h2>
-    <div class="checkbox-container">
-      <label><input type="checkbox" value="Fever" /> Fever</label>
-      <label><input type="checkbox" value="Cough" /> Cough</label>
-      <label><input type="checkbox" value="Headache" /> Headache</label>
-      <label><input type="checkbox" value="Sore Throat" /> Sore Throat</label>
-      <label><input type="checkbox" value="Fatigue" /> Fatigue</label>
-      <label><input type="checkbox" value="Nausea" /> Nausea</label>
-      <label><input type="checkbox" value="Vomiting" /> Vomiting</label>
-      <label><input type="checkbox" value="Diarrhea" /> Diarrhea</label>
-      <label><input type="checkbox" value="Chest Pain" /> Chest Pain</label>
-      <label><input type="checkbox" value="Shortness of Breath" /> Shortness of Breath</label>
-      <label><input type="checkbox" value="Skin Rash" /> Skin Rash</label>
-      <label><input type="checkbox" value="Back Pain" /> Back Pain</label>
-      <label><input type="checkbox" value="Dizziness" /> Dizziness</label>
-      <label><input type="checkbox" value="Loss of Appetite" /> Loss of Appetite</label>
-      <label><input type="checkbox" value="Joint Pain" /> Joint Pain</label>
-      <label><input type="checkbox" value="Abdominal Pain" /> Abdominal Pain</label>
-      <label><input type="checkbox" value="Constipation" /> Constipation</label>
-      <label><input type="checkbox" value="Runny Nose" /> Runny Nose</label>
-      <label><input type="checkbox" value="Sneezing" /> Sneezing</label>
-      <label><input type="checkbox" value="Itchy Eyes" /> Itchy Eyes</label>
-      <label><input type="checkbox" value="Swollen Glands" /> Swollen Glands</label>
-      <label><input type="checkbox" value="Muscle Aches" /> Muscle Aches</label>
-      <label><input type="checkbox" value="Ear Pain" /> Ear Pain</label>
-      <label><input type="checkbox" value="Blurred Vision" /> Blurred Vision</label>
-      <label><input type="checkbox" value="Palpitations" /> Palpitations</label>
-      <label><input type="checkbox" value="Fainting" /> Fainting</label>
+      <!-- Mental Wellness Card -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-brain"></i>
+          <h2>Mental Wellness</h2>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="mood">Current Mood</label>
+          <select id="mood" onchange="checkMentalWellness()">
+            <option value="Happy">😊 Happy & Positive</option>
+            <option value="Okay">😐 Okay & Neutral</option>
+            <option value="Stressed">😣 Stressed & Anxious</option>
+          </select>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-label">
+            <span>Mood Status</span>
+          </div>
+          <div class="progress-bar">
+            <div id="moodBar" class="progress-fill" style="width:100%; background: linear-gradient(90deg, var(--secondary-color), #059669);"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sleep">Sleep Duration: <span id="sleepValue">8</span> hours</label>
+          <input type="range" id="sleep" min="0" max="24" value="8" oninput="checkMentalWellness()" />
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-label">
+            <span>Sleep Quality</span>
+          </div>
+          <div class="progress-bar">
+            <div id="sleepBar" class="progress-fill" style="width:33%; background: linear-gradient(90deg, var(--secondary-color), #059669);"></div>
+          </div>
+        </div>
+
+        <div class="result" id="mentalMessage"></div>
+      </div>
     </div>
 
-    <button onclick="evaluateSymptoms()">Check Condition</button>
-    <div class="result" id="conditionResult"></div>
-  </div>
+    <!-- Symptoms Card -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-stethoscope"></i>
+        <h2>Symptom Assessment</h2>
+      </div>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select all symptoms you're currently experiencing</p>
+      
+      <div class="checkbox-grid">
+        <label class="checkbox-item">
+          <input type="checkbox" value="Fever" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-thermometer-half" style="margin-right: 8px; color: var(--danger-color);"></i>Fever</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Cough" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-lungs" style="margin-right: 8px; color: var(--warning-color);"></i>Cough</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Headache" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-head-side-cough" style="margin-right: 8px; color: var(--danger-color);"></i>Headache</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Sore Throat" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-throat" style="margin-right: 8px; color: var(--warning-color);"></i>Sore Throat</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Fatigue" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-tired" style="margin-right: 8px; color: var(--accent-color);"></i>Fatigue</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Nausea" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-dizzy" style="margin-right: 8px; color: var(--warning-color);"></i>Nausea</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Vomiting" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-sad-tear" style="margin-right: 8px; color: var(--danger-color);"></i>Vomiting</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Diarrhea" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-toilet" style="margin-right: 8px; color: var(--warning-color);"></i>Diarrhea</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Chest Pain" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-heart-broken" style="margin-right: 8px; color: var(--danger-color);"></i>Chest Pain</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Shortness of Breath" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-wind" style="margin-right: 8px; color: var(--danger-color);"></i>Shortness of Breath</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Skin Rash" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-allergies" style="margin-right: 8px; color: var(--warning-color);"></i>Skin Rash</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Back Pain" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-spine" style="margin-right: 8px; color: var(--accent-color);"></i>Back Pain</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Dizziness" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-dizzy" style="margin-right: 8px; color: var(--warning-color);"></i>Dizziness</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Loss of Appetite" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-utensils" style="margin-right: 8px; color: var(--accent-color);"></i>Loss of Appetite</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Joint Pain" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-bone" style="margin-right: 8px; color: var(--warning-color);"></i>Joint Pain</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Abdominal Pain" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-stomach" style="margin-right: 8px; color: var(--danger-color);"></i>Abdominal Pain</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Constipation" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-pills" style="margin-right: 8px; color: var(--accent-color);"></i>Constipation</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Runny Nose" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-nose" style="margin-right: 8px; color: var(--secondary-color);"></i>Runny Nose</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Sneezing" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-head-side-cough-slash" style="margin-right: 8px; color: var(--secondary-color);"></i>Sneezing</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Itchy Eyes" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-eye" style="margin-right: 8px; color: var(--warning-color);"></i>Itchy Eyes</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Swollen Glands" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-lymph-nodes" style="margin-right: 8px; color: var(--warning-color);"></i>Swollen Glands</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Muscle Aches" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-dumbbell" style="margin-right: 8px; color: var(--accent-color);"></i>Muscle Aches</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Ear Pain" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-ear-deaf" style="margin-right: 8px; color: var(--warning-color);"></i>Ear Pain</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Blurred Vision" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-glasses" style="margin-right: 8px; color: var(--danger-color);"></i>Blurred Vision</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Palpitations" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-heartbeat" style="margin-right: 8px; color: var(--danger-color);"></i>Palpitations</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="Fainting" onchange="updateCheckboxStyle(this)"/> 
+          <span><i class="fas fa-dizzy" style="margin-right: 8px; color: var(--danger-color);"></i>Fainting</span>
+        </label>
+      </div>
 
-  <div class="section">
-    <h2>🧠 Mental Wellness</h2>
-    <label>Mood:</label>
-    <select id="mood" onchange="checkMentalWellness()">
-      <option value="Happy">😊 Happy</option>
-      <option value="Okay">😐 Okay</option>
-      <option value="Stressed">😣 Stressed</option>
-    </select>
-    <div class="bar">
-      <div id="moodBar" class="bar-fill" style="width:100%; background:#76c7c0;"></div>
+      <button class="btn btn-primary" onclick="evaluateSymptoms()">
+        <i class="fas fa-search"></i> Analyze Symptoms
+      </button>
+      <div class="result" id="conditionResult"></div>
     </div>
 
-    <label>Sleep Duration (hrs): <span id="sleepValue">8</span></label>
-    <input type="range" id="sleep" min="0" max="24" value="8" oninput="checkMentalWellness()" />
-    <div class="bar">
-      <div id="sleepBar" class="bar-fill" style="width:33%; background:#76c7c0;"></div>
+    <div class="grid grid-2">
+      <!-- Vital Signs Card -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-heartbeat"></i>
+          <h2>Vital Signs</h2>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bp">Blood Pressure (Systolic)</label>
+          <input type="number" id="bp" placeholder="120" min="70" max="200" />
+          <small style="color: var(--text-secondary);">Normal: 90-120 mmHg</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="sugar">Blood Sugar Level</label>
+          <input type="number" id="sugar" placeholder="90" min="50" max="400" />
+          <small style="color: var(--text-secondary);">Normal: 70-140 mg/dL</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="heartrate">Heart Rate</label>
+          <input type="number" id="heartrate" placeholder="75" min="40" max="200" />
+          <small style="color: var(--text-secondary);">Normal: 60-100 bpm</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="vision">Vision Issues</label>
+          <select id="vision">
+            <option value="">Select an option</option>
+            <option value="No">No vision problems</option>
+            <option value="Yes">Have vision issues</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" onclick="evaluateGeneralCheckup()">
+          <i class="fas fa-chart-line"></i> Check Vital Signs
+        </button>
+        <div class="result" id="generalResult"></div>
+      </div>
+
+      <!-- Actions Card -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-tools"></i>
+          <h2>Health Actions</h2>
+        </div>
+        
+        <div class="form-group">
+          <button class="btn btn-primary" onclick="generateReport()" style="width: 100%; margin-bottom: 1rem;">
+            <i class="fas fa-file-pdf"></i> Download Health Report
+          </button>
+          <div class="result" id="reportResult"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="location">Your Location</label>
+          <input type="text" id="location" placeholder="Enter city or area" />
+          <button class="btn btn-accent" onclick="findHospitals()" style="width: 100%; margin-top: 0.5rem;">
+            <i class="fas fa-hospital"></i> Find Nearby Hospitals
+          </button>
+          <div class="result" id="hospitalResult"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="result" id="mentalMessage"></div>
-  </div>
-
-  <div class="section">
-    <h2>🩺 General Health Check-Up</h2>
-    <input type="number" id="bp" placeholder="Blood Pressure (e.g., 120)" />
-    <input type="number" id="sugar" placeholder="Sugar Level (mg/dL)" />
-    <input type="number" id="heartrate" placeholder="Heart Rate (bpm)" />
-    <select id="vision">
-      <option value="">Do you have any vision issues?</option>
-      <option value="Yes">Yes</option>
-      <option value="No">No</option>
-    </select>
-    <button onclick="evaluateGeneralCheckup()">Check General Health</button>
-    <div class="result" id="generalResult"></div>
-  </div>
-
-  <div class="section">
-    <h2>📄 Download Report</h2>
-    <button onclick="generateReport()">Download PDF Report</button>
-    <div class="result" id="reportResult"></div>
-  </div>
-
-  <div class="section">
-    <h2>🧭 Hospital Locator</h2>
-    <input type="text" id="location" placeholder="Enter your location (e.g., New York)" />
-    <button onclick="findHospitals()">Find Hospitals Near Me</button>
-    <div class="result" id="hospitalResult"></div>
-  </div>
-
-  <div class="section">
-    <h2>💊 Medicine Reminder</h2>
-    <input type="text" id="medicineName" placeholder="Medicine Name" />
-    <input type="time" id="medicineTime" />
-    <button onclick="setReminder()">Set Reminder</button>
-    <div class="result" id="reminderResult"></div>
+    <!-- Medicine Reminder Card -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-pills"></i>
+        <h2>Medicine Reminder</h2>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label class="form-label" for="medicineName">Medicine Name</label>
+          <input type="text" id="medicineName" placeholder="e.g., Aspirin" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="medicineTime">Reminder Time</label>
+          <input type="time" id="medicineTime" />
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="setReminder()">
+        <i class="fas fa-clock"></i> Set Reminder
+      </button>
+      <div class="result" id="reminderResult"></div>
+    </div>
   </div>
 
   <script>
     // Global variables
     let currentRiskLevel = 'Low';
     let currentDiagnoses = [];
+
+    // Update checkbox styling
+    function updateCheckboxStyle(checkbox) {
+      const item = checkbox.closest('.checkbox-item');
+      if (checkbox.checked) {
+        item.classList.add('checked');
+      } else {
+        item.classList.remove('checked');
+      }
+    }
 
     function calculateBMI() {
       const height = parseFloat(document.getElementById("height").value);
@@ -199,13 +779,31 @@
       if (height && weight) {
         const bmi = weight / ((height / 100) ** 2);
         let status = '';
-        if (bmi < 18.5) status = 'Underweight';
-        else if (bmi < 24.9) status = 'Normal';
-        else if (bmi < 29.9) status = 'Overweight';
-        else status = 'Obese';
-        result.innerHTML = `BMI: ${bmi.toFixed(2)} (${status})`;
+        let statusClass = '';
+        if (bmi < 18.5) {
+          status = 'Underweight';
+          statusClass = 'status-medium';
+        } else if (bmi < 24.9) {
+          status = 'Normal';
+          statusClass = 'status-low';
+        } else if (bmi < 29.9) {
+          status = 'Overweight';
+          statusClass = 'status-medium';
+        } else {
+          status = 'Obese';
+          statusClass = 'status-high';
+        }
+        result.innerHTML = `<div style="display: flex; align-items: center; gap: 1rem;">
+          <i class="fas fa-weight" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+          <div>
+            <strong>BMI: ${bmi.toFixed(2)}</strong>
+            <span class="status-indicator ${statusClass}">${status}</span>
+          </div>
+        </div>`;
+        result.className = 'result success';
       } else {
         result.innerHTML = '';
+        result.className = 'result';
       }
     }
 
@@ -215,11 +813,13 @@
       const resultDiv = document.getElementById("conditionResult");
 
       if (selectedSymptoms.length === 0) {
-        resultDiv.innerHTML = "⚠️ Please select at least one symptom.";
+        resultDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please select at least one symptom to analyze.';
+        resultDiv.className = 'result warning';
         return;
       }
 
-      resultDiv.innerHTML = '<span class="loading">Analyzing symptoms...</span>';
+      resultDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 0.5rem;"><div class="spinner"></div> Analyzing symptoms...</div>';
+      resultDiv.className = 'result loading';
 
       try {
         // Get diagnosis from backend
@@ -247,7 +847,7 @@
           currentRiskLevel = riskData.risk;
           currentDiagnoses = diagnoseData.results; // Store diagnoses for PDF report
           
-          let resultText = '🩺 Analysis Results:\n\n';
+          let resultText = '<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;"><i class="fas fa-clipboard-check" style="color: var(--primary-color);"></i><strong>Analysis Results</strong></div>\n\n';
           
           // Group by condition
           const conditionMap = {};
@@ -260,23 +860,31 @@
 
           for (let condition in conditionMap) {
             const medicines = [...new Set(conditionMap[condition])].join(", ");
-            resultText += `• ${condition} → 💊 ${medicines}\n`;
+            resultText += `<div style="margin-bottom: 0.5rem;"><i class="fas fa-prescription-bottle-alt" style="color: var(--secondary-color); margin-right: 0.5rem;"></i><strong>${condition}</strong> → ${medicines}</div>\n`;
           }
 
-          resultText += `\n🔴 Risk Level: ${currentRiskLevel}`;
+          let riskClass = 'status-low';
+          if (currentRiskLevel === 'High') riskClass = 'status-high';
+          else if (currentRiskLevel === 'Medium') riskClass = 'status-medium';
+
+          resultText += `\n<div style="margin-top: 1rem; padding: 1rem; border-radius: 8px; background: rgba(37, 99, 235, 0.05);">
+            <span class="status-indicator ${riskClass}"><i class="fas fa-shield-alt"></i> Risk Level: ${currentRiskLevel}</span>
+          </div>`;
           
           if (currentRiskLevel === 'High') {
-            resultText += '\n⚠️ Consider consulting a healthcare professional immediately.';
+            resultText += '\n<div style="color: var(--danger-color); margin-top: 0.5rem;"><i class="fas fa-exclamation-triangle"></i> Consider consulting a healthcare professional immediately.</div>';
           } else if (currentRiskLevel === 'Medium') {
-            resultText += '\n⚠️ Monitor symptoms and consider medical consultation.';
+            resultText += '\n<div style="color: var(--warning-color); margin-top: 0.5rem;"><i class="fas fa-info-circle"></i> Monitor symptoms and consider medical consultation.</div>';
           }
 
           resultDiv.innerHTML = resultText;
+          resultDiv.className = 'result success';
         } else {
           throw new Error('Failed to get diagnosis');
         }
       } catch (error) {
-        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+        resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error: ${error.message}`;
+        resultDiv.className = 'result error';
       }
     }
 
@@ -289,24 +897,31 @@
 
       sleepValue.textContent = sleep;
 
-      let moodColor = '#76c7c0';
-      if (mood === "Okay") moodColor = 'orange';
-      else if (mood === "Stressed") moodColor = 'red';
+      let moodColor = 'linear-gradient(90deg, var(--secondary-color), #059669)';
+      if (mood === "Okay") moodColor = 'linear-gradient(90deg, var(--accent-color), #d97706)';
+      else if (mood === "Stressed") moodColor = 'linear-gradient(90deg, var(--danger-color), #dc2626)';
       moodBar.style.background = moodColor;
 
       sleepBar.style.width = `${(sleep / 24) * 100}%`;
-      sleepBar.style.background = sleep < 6 ? 'red' : (sleep < 8 ? 'orange' : '#76c7c0');
+      let sleepColor = 'linear-gradient(90deg, var(--secondary-color), #059669)';
+      if (sleep < 6) sleepColor = 'linear-gradient(90deg, var(--danger-color), #dc2626)';
+      else if (sleep < 8) sleepColor = 'linear-gradient(90deg, var(--accent-color), #d97706)';
+      sleepBar.style.background = sleepColor;
 
       let msg = '';
+      let msgClass = 'result success';
       if (mood === "Stressed" || sleep < 5) {
-        msg = "🧘‍♀️ Take a deep breath. Consider relaxation techniques. You're doing great!";
+        msg = '<i class="fas fa-spa"></i> Take a deep breath and consider relaxation techniques. You\'re doing great!';
+        msgClass = 'result warning';
       } else if (sleep > 9) {
-        msg = "😴 You're well rested. Keep up the good sleep habits!";
+        msg = '<i class="fas fa-bed"></i> You\'re well rested. Keep up the good sleep habits!';
       } else {
-        msg = "✨ Stay balanced. Health is wealth!";
+        msg = '<i class="fas fa-heart"></i> Stay balanced. Health is wealth!';
       }
 
-      document.getElementById("mentalMessage").innerHTML = msg;
+      const messageDiv = document.getElementById("mentalMessage");
+      messageDiv.innerHTML = msg;
+      messageDiv.className = msgClass;
     }
 
     function evaluateGeneralCheckup() {
@@ -314,24 +929,61 @@
       const sugar = parseInt(document.getElementById("sugar").value);
       const hr = parseInt(document.getElementById("heartrate").value);
       const vision = document.getElementById("vision").value;
-      let msg = "";
+      const resultDiv = document.getElementById("generalResult");
+      
+      let results = [];
+      let overallStatus = 'success';
 
-      if (bp > 140) msg += "⚠️ High blood pressure detected. ";
-      else if (bp < 90) msg += "⚠️ Low blood pressure detected. ";
-      else if (bp) msg += "✅ Blood pressure normal. ";
+      if (bp) {
+        if (bp > 140) {
+          results.push('<i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i> High blood pressure detected');
+          overallStatus = 'error';
+        } else if (bp < 90) {
+          results.push('<i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i> Low blood pressure detected');
+          if (overallStatus === 'success') overallStatus = 'warning';
+        } else {
+          results.push('<i class="fas fa-check-circle" style="color: var(--success-color);"></i> Blood pressure normal');
+        }
+      }
 
-      if (sugar > 180) msg += "⚠️ High sugar level detected. ";
-      else if (sugar < 70) msg += "⚠️ Low sugar level detected. ";
-      else if (sugar) msg += "✅ Sugar level normal. ";
+      if (sugar) {
+        if (sugar > 180) {
+          results.push('<i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i> High blood sugar detected');
+          overallStatus = 'error';
+        } else if (sugar < 70) {
+          results.push('<i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i> Low blood sugar detected');
+          if (overallStatus === 'success') overallStatus = 'warning';
+        } else {
+          results.push('<i class="fas fa-check-circle" style="color: var(--success-color);"></i> Blood sugar normal');
+        }
+      }
 
-      if (hr > 100) msg += "⚠️ High heart rate detected. ";
-      else if (hr < 60) msg += "⚠️ Low heart rate detected. ";
-      else if (hr) msg += "✅ Heart rate normal. ";
+      if (hr) {
+        if (hr > 100) {
+          results.push('<i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i> High heart rate detected');
+          overallStatus = 'error';
+        } else if (hr < 60) {
+          results.push('<i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i> Low heart rate detected');
+          if (overallStatus === 'success') overallStatus = 'warning';
+        } else {
+          results.push('<i class="fas fa-check-circle" style="color: var(--success-color);"></i> Heart rate normal');
+        }
+      }
 
-      if (vision === "Yes") msg += "👁️ Vision issues reported.";
-      else if (vision === "No") msg += "✅ No vision issues reported.";
+      if (vision === "Yes") {
+        results.push('<i class="fas fa-eye" style="color: var(--warning-color);"></i> Vision issues reported');
+        if (overallStatus === 'success') overallStatus = 'warning';
+      } else if (vision === "No") {
+        results.push('<i class="fas fa-check-circle" style="color: var(--success-color);"></i> No vision issues reported');
+      }
 
-      document.getElementById("generalResult").innerHTML = msg;
+      if (results.length > 0) {
+        resultDiv.innerHTML = results.join('<br>');
+        resultDiv.className = `result ${overallStatus}`;
+      } else {
+        resultDiv.innerHTML = '<i class="fas fa-info-circle"></i> Please enter your vital signs for assessment.';
+        resultDiv.className = 'result';
+      }
     }
 
     async function generateReport() {
@@ -339,7 +991,8 @@
       const age = document.getElementById("age").value || "N/A";
       const resultDiv = document.getElementById("reportResult");
 
-      resultDiv.innerHTML = '<span class="loading">Generating comprehensive report...</span>';
+      resultDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 0.5rem;"><div class="spinner"></div> Generating comprehensive report...</div>';
+      resultDiv.className = 'result loading';
 
       try {
         // Collect all health data
@@ -372,12 +1025,14 @@
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
-          resultDiv.innerHTML = '<span class="success">✅ Comprehensive report downloaded successfully!</span>';
+          resultDiv.innerHTML = '<i class="fas fa-download"></i> Comprehensive health report downloaded successfully!';
+          resultDiv.className = 'result success';
         } else {
           throw new Error('Failed to generate report');
         }
       } catch (error) {
-        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+        resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error: ${error.message}`;
+        resultDiv.className = 'result error';
       }
     }
 
@@ -435,7 +1090,8 @@
       const location = document.getElementById("location").value || "your location";
       const resultDiv = document.getElementById("hospitalResult");
 
-      resultDiv.innerHTML = '<span class="loading">Finding hospitals...</span>';
+      resultDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 0.5rem;"><div class="spinner"></div> Finding hospitals...</div>';
+      resultDiv.className = 'result loading';
 
       try {
         const response = await fetch('/find-hospitals', {
@@ -448,12 +1104,16 @@
 
         if (response.ok) {
           const data = await response.json();
-          resultDiv.innerHTML = `<a href="${data.map_url}" target="_blank" style="color: #007bff; text-decoration: none;">🏥 Click here to find hospitals near ${location}</a>`;
+          resultDiv.innerHTML = `<a href="${data.map_url}" target="_blank" style="color: var(--primary-color); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-hospital"></i> Click here to find hospitals near ${location}
+          </a>`;
+          resultDiv.className = 'result success';
         } else {
           throw new Error('Failed to find hospitals');
         }
       } catch (error) {
-        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+        resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error: ${error.message}`;
+        resultDiv.className = 'result error';
       }
     }
 
@@ -463,7 +1123,8 @@
       const resultDiv = document.getElementById("reminderResult");
 
       if (!medicineName || !medicineTime) {
-        resultDiv.innerHTML = '<span class="error">Please enter both medicine name and time.</span>';
+        resultDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please enter both medicine name and time.';
+        resultDiv.className = 'result warning';
         return;
       }
 
@@ -480,7 +1141,8 @@
 
         if (response.ok) {
           const data = await response.json();
-          resultDiv.innerHTML = `<span class="success">✅ ${data.status}</span>`;
+          resultDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${data.status}`;
+          resultDiv.className = 'result success';
           document.getElementById("medicineName").value = '';
           document.getElementById("medicineTime").value = '';
         } else {
@@ -488,7 +1150,8 @@
           throw new Error(errorData.error || 'Failed to set reminder');
         }
       } catch (error) {
-        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+        resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error: ${error.message}`;
+        resultDiv.className = 'result error';
       }
     }
 
