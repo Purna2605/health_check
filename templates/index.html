@@ -189,6 +189,7 @@
   <script>
     // Global variables
     let currentRiskLevel = 'Low';
+    let currentDiagnoses = [];
 
     function calculateBMI() {
       const height = parseFloat(document.getElementById("height").value);
@@ -244,6 +245,7 @@
           const riskData = await riskResponse.json();
           
           currentRiskLevel = riskData.risk;
+          currentDiagnoses = diagnoseData.results; // Store diagnoses for PDF report
           
           let resultText = '🩺 Analysis Results:\n\n';
           
@@ -337,19 +339,27 @@
       const age = document.getElementById("age").value || "N/A";
       const resultDiv = document.getElementById("reportResult");
 
-      resultDiv.innerHTML = '<span class="loading">Generating report...</span>';
+      resultDiv.innerHTML = '<span class="loading">Generating comprehensive report...</span>';
 
       try {
+        // Collect all health data
+        const healthData = {
+          name: name,
+          age: age,
+          risk_level: currentRiskLevel,
+          symptoms: getSelectedSymptoms(),
+          diagnoses: currentDiagnoses || [],
+          bmi: getBMIData(),
+          mental_wellness: getMentalWellnessData(),
+          vital_signs: getVitalSignsData()
+        };
+
         const response = await fetch('/generate-report', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            name: name,
-            age: age,
-            risk_level: currentRiskLevel
-          })
+          body: JSON.stringify(healthData)
         });
 
         if (response.ok) {
@@ -362,13 +372,63 @@
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
-          resultDiv.innerHTML = '<span class="success">✅ Report downloaded successfully!</span>';
+          resultDiv.innerHTML = '<span class="success">✅ Comprehensive report downloaded successfully!</span>';
         } else {
           throw new Error('Failed to generate report');
         }
       } catch (error) {
         resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
       }
+    }
+
+    // Helper functions to collect health data
+    function getSelectedSymptoms() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+      return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    function getBMIData() {
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      
+      if (height && weight) {
+        const bmi = weight / ((height / 100) ** 2);
+        let category = '';
+        if (bmi < 18.5) category = 'Underweight';
+        else if (bmi < 24.9) category = 'Normal';
+        else if (bmi < 29.9) category = 'Overweight';
+        else category = 'Obese';
+        
+        return {
+          value: bmi.toFixed(2),
+          category: category
+        };
+      }
+      return null;
+    }
+
+    function getMentalWellnessData() {
+      const mood = document.getElementById("mood").value;
+      const sleep = parseInt(document.getElementById("sleep").value);
+      
+      return {
+        mood: mood,
+        sleep: sleep
+      };
+    }
+
+    function getVitalSignsData() {
+      const bp = document.getElementById("bp").value;
+      const sugar = document.getElementById("sugar").value;
+      const heartrate = document.getElementById("heartrate").value;
+      const vision = document.getElementById("vision").value;
+      
+      return {
+        blood_pressure: bp || "N/A",
+        sugar_level: sugar || "N/A",
+        heart_rate: heartrate || "N/A",
+        vision: vision || "N/A"
+      };
     }
 
     async function findHospitals() {

@@ -8,7 +8,7 @@ A comprehensive web application for health monitoring and assessment built with 
 - **Symptom Analysis**: Select symptoms and get AI-powered diagnosis and risk assessment
 - **Mental Wellness Tracker**: Monitor mood and sleep patterns
 - **General Health Check-Up**: Track vital signs like blood pressure, sugar levels, and heart rate
-- **PDF Report Generation**: Download comprehensive health reports
+- **Comprehensive PDF Reports**: Download detailed reports with symptoms, medicines, BMI, vital signs, and recommendations
 - **Hospital Locator**: Find nearby hospitals based on location
 - **Medicine Reminders**: Set time-based medication reminders
 

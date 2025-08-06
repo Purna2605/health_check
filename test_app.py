@@ -80,8 +80,48 @@ def test_app():
     except Exception as e:
         print(f"❌ Medicine Reminder Test error: {e}")
     
+    # Test 7: Comprehensive PDF Report
+    try:
+        report_data = {
+            "name": "John Doe",
+            "age": "30",
+            "risk_level": "Medium",
+            "symptoms": ["Fever", "Cough", "Headache"],
+            "diagnoses": [
+                {"symptom": "Fever", "condition": "Flu", "medicine": "Paracetamol"},
+                {"symptom": "Cough", "condition": "Flu", "medicine": "Cough Syrup"},
+                {"symptom": "Headache", "condition": "Migraine", "medicine": "Ibuprofen"}
+            ],
+            "bmi": {"value": "24.2", "category": "Normal"},
+            "mental_wellness": {"mood": "Okay", "sleep": 7},
+            "vital_signs": {
+                "blood_pressure": "120",
+                "sugar_level": "90",
+                "heart_rate": "75",
+                "vision": "No"
+            }
+        }
+        response = requests.post(f"{base_url}/generate-report", json=report_data)
+        if response.status_code == 200:
+            print("✅ Comprehensive PDF Report Test: Report generated successfully")
+            # Save test report
+            with open("test_health_report.pdf", "wb") as f:
+                f.write(response.content)
+            print("   📄 Test report saved as 'test_health_report.pdf'")
+        else:
+            print("❌ PDF Report Test failed")
+    except Exception as e:
+        print(f"❌ PDF Report Test error: {e}")
+
     print("\n🎉 All tests completed!")
     print(f"📱 Visit {base_url} in your browser to use the app")
+    print("📄 The PDF report now includes:")
+    print("   • Selected symptoms")
+    print("   • Recommended medicines for each condition")
+    print("   • BMI assessment")
+    print("   • Mental wellness data")
+    print("   • Vital signs")
+    print("   • Risk-based recommendations")
     return True
 
 if __name__ == "__main__":

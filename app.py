@@ -121,7 +121,22 @@ def generate_report_route():
         name = data.get("name", "N/A")
         age = data.get("age", "N/A")
         risk_level = data.get("risk_level", "Low")
-        file_path = generate_pdf(name, age, risk_level)
+        symptoms = data.get("symptoms", [])
+        diagnoses = data.get("diagnoses", [])
+        bmi = data.get("bmi")
+        mental_wellness = data.get("mental_wellness")
+        vital_signs = data.get("vital_signs")
+        
+        file_path = generate_pdf(
+            name=name,
+            age=age,
+            risk_level=risk_level,
+            symptoms=symptoms,
+            diagnoses=diagnoses,
+            bmi=bmi,
+            mental_wellness=mental_wellness,
+            vital_signs=vital_signs
+        )
         return send_file(file_path, as_attachment=True, download_name="health_report.pdf")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
