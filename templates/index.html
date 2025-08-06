@@ -847,6 +847,9 @@
           currentRiskLevel = riskData.risk;
           currentDiagnoses = diagnoseData.results; // Store diagnoses for PDF report
           
+          // Debug: Log the diagnoses being stored
+          console.log('💊 Storing diagnoses:', currentDiagnoses);
+          
           let resultText = '<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;"><i class="fas fa-clipboard-check" style="color: var(--primary-color);"></i><strong>Analysis Results</strong></div>\n\n';
           
           // Group by condition
@@ -1007,6 +1010,11 @@
           vital_signs: getVitalSignsData()
         };
 
+        // Debug: Log the data being sent
+        console.log('📊 Health Data being sent:', healthData);
+        console.log('📋 Symptoms:', healthData.symptoms);
+        console.log('💊 Diagnoses:', healthData.diagnoses);
+
         const response = await fetch('/generate-report', {
           method: 'POST',
           headers: {
@@ -1015,22 +1023,36 @@
           body: JSON.stringify(healthData)
         });
 
+        console.log('📥 Response status:', response.status);
+
         if (response.ok) {
           const blob = await response.blob();
+          console.log('📄 PDF blob size:', blob.size, 'bytes');
+          
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = url;
-          a.download = 'health_report.pdf';
+          a.download = 'comprehensive_health_report.pdf';
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          
           resultDiv.innerHTML = '<i class="fas fa-download"></i> Comprehensive health report downloaded successfully!';
           resultDiv.className = 'result success';
         } else {
-          throw new Error('Failed to generate report');
+          const errorText = await response.text();
+          console.error('❌ Server error:', errorText);
+          try {
+            const errorData = JSON.parse(errorText);
+            throw new Error(errorData.error || 'Server error');
+          } catch {
+            throw new Error(`Server error: ${response.status} - ${errorText}`);
+          }
         }
       } catch (error) {
+        console.error('❌ PDF Generation Error:', error);
         resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error: ${error.message}`;
         resultDiv.className = 'result error';
       }

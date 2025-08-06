@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Generation Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>🏥 PDF Generation Test</h1>
+    
+    <h3>Test Data:</h3>
+    <ul>
+        <li>Name: John Test</li>
+        <li>Age: 30</li>
+        <li>Symptoms: Fever, Cough, Headache</li>
+        <li>Risk Level: Medium</li>
+        <li>BMI: 24.2 (Normal)</li>
+    </ul>
+    
+    <button onclick="testPDFGeneration()">🔧 Test PDF Generation</button>
+    <button onclick="testWithFullData()">📋 Test with Full Data</button>
+    <button onclick="clearResults()">🗑️ Clear Results</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        async function testPDFGeneration() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="result loading">🔄 Testing basic PDF generation...</div>';
+            
+            const testData = {
+                name: "John Test",
+                age: "30",
+                risk_level: "Medium",
+                symptoms: ["Fever", "Cough", "Headache"],
+                diagnoses: [
+                    {"symptom": "Fever", "condition": "Flu", "medicine": "Paracetamol"},
+                    {"symptom": "Cough", "condition": "Flu", "medicine": "Cough Syrup"},
+                    {"symptom": "Headache", "condition": "Migraine", "medicine": "Ibuprofen"}
+                ]
+            };
+            
+            try {
+                console.log('📤 Sending test data:', testData);
+                
+                const response = await fetch('/generate-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                console.log('📥 Response status:', response.status);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    console.log('📄 PDF size:', blob.size, 'bytes');
+                    
+                    // Download the PDF
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'test_basic_report.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✅ Basic PDF generated successfully!<br>
+                            📄 Size: ${blob.size.toLocaleString()} bytes<br>
+                            💾 Downloaded as: test_basic_report.pdf
+                        </div>`;
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Error response:', errorText);
+                    resultDiv.innerHTML = `<div class="result error">❌ Error: ${errorText}</div>`;
+                }
+            } catch (error) {
+                console.error('❌ Exception:', error);
+                resultDiv.innerHTML = `<div class="result error">❌ Exception: ${error.message}</div>`;
+            }
+        }
+        
+        async function testWithFullData() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="result loading">🔄 Testing full comprehensive PDF...</div>';
+            
+            const fullTestData = {
+                name: "Jane Complete",
+                age: "28",
+                risk_level: "High",
+                symptoms: ["Chest Pain", "Shortness of Breath", "Dizziness", "Fatigue"],
+                diagnoses: [
+                    {"symptom": "Chest Pain", "condition": "Cardiac Issue", "medicine": "Consult Doctor"},
+                    {"symptom": "Shortness of Breath", "condition": "Asthma", "medicine": "Inhaler"},
+                    {"symptom": "Dizziness", "condition": "Vertigo", "medicine": "Meclizine"},
+                    {"symptom": "Fatigue", "condition": "Anemia", "medicine": "Iron Supplements"}
+                ],
+                bmi: {"value": "26.8", "category": "Overweight"},
+                mental_wellness: {"mood": "Stressed", "sleep": 5},
+                vital_signs: {
+                    "blood_pressure": "145",
+                    "sugar_level": "110",
+                    "heart_rate": "95",
+                    "vision": "Yes"
+                }
+            };
+            
+            try {
+                console.log('📤 Sending full test data:', fullTestData);
+                
+                const response = await fetch('/generate-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(fullTestData)
+                });
+                
+                console.log('📥 Response status:', response.status);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    console.log('📄 PDF size:', blob.size, 'bytes');
+                    
+                    // Download the PDF
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'test_comprehensive_report.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✅ Comprehensive PDF generated successfully!<br>
+                            📄 Size: ${blob.size.toLocaleString()} bytes<br>
+                            📋 Includes: ${fullTestData.symptoms.length} symptoms, ${fullTestData.diagnoses.length} diagnoses<br>
+                            💾 Downloaded as: test_comprehensive_report.pdf
+                        </div>`;
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Error response:', errorText);
+                    resultDiv.innerHTML = `<div class="result error">❌ Error: ${errorText}</div>`;
+                }
+            } catch (error) {
+                console.error('❌ Exception:', error);
+                resultDiv.innerHTML = `<div class="result error">❌ Exception: ${error.message}</div>`;
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('result').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

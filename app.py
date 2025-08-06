@@ -98,6 +98,11 @@ def diagnose():
 def home():
     return render_template('index.html')
 
+@app.route("/test-pdf", methods=["GET"])
+def test_pdf():
+    with open('test_pdf_manual.html', 'r') as f:
+        return f.read()
+
 @app.route("/api", methods=["GET"])
 def api_home():
     return "Welcome to the Health Check App Backend API!"
