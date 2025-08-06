@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Check App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    .section {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input, select {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .result {
+      font-weight: bold;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+    .bar {
+      height: 20px;
+      width: 100%;
+      background: #eee;
+      border-radius: 10px;
+      margin: 10px 0;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="section">
+    <h2>👤 Personal Info</h2>
+    <input type="text" id="name" placeholder="Name" />
+    <input type="number" id="age" placeholder="Age" />
+    <input type="number" id="height" placeholder="Height (cm)" oninput="calculateBMI()"/>
+    <input type="number" id="weight" placeholder="Weight (kg)" oninput="calculateBMI()"/>
+    <div class="result" id="bmiResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>🤒 Select Your Symptoms</h2>
+    <!-- Symptom checkboxes here (unchanged) -->
+    <label><input type="checkbox" value="Fever" /> Fever</label>
+    <label><input type="checkbox" value="Cough" /> Cough</label>
+    <label><input type="checkbox" value="Headache" /> Headache</label>
+    <label><input type="checkbox" value="Sore Throat" /> Sore Throat</label>
+    <label><input type="checkbox" value="Fatigue" /> Fatigue</label>
+    <label><input type="checkbox" value="Nausea" /> Nausea</label>
+    <label><input type="checkbox" value="Vomiting" /> Vomiting</label>
+    <label><input type="checkbox" value="Diarrhea" /> Diarrhea</label>
+    <label><input type="checkbox" value="Chest Pain" /> Chest Pain</label>
+    <label><input type="checkbox" value="Shortness of Breath" /> Shortness of Breath</label>
+    <label><input type="checkbox" value="Skin Rash" /> Skin Rash</label>
+    <label><input type="checkbox" value="Back Pain" /> Back Pain</label>
+    <label><input type="checkbox" value="Dizziness" /> Dizziness</label>
+    <label><input type="checkbox" value="Loss of Appetite" /> Loss of Appetite</label>
+    <label><input type="checkbox" value="Joint Pain" /> Joint Pain</label>
+    <label><input type="checkbox" value="Abdominal Pain" /> Abdominal Pain</label>
+    <label><input type="checkbox" value="Constipation" /> Constipation</label>
+    <label><input type="checkbox" value="Runny Nose" /> Runny Nose</label>
+    <label><input type="checkbox" value="Sneezing" /> Sneezing</label>
+    <label><input type="checkbox" value="Itchy Eyes" /> Itchy Eyes</label>
+    <label><input type="checkbox" value="Swollen Glands" /> Swollen Glands</label>
+    <label><input type="checkbox" value="Muscle Aches" /> Muscle Aches</label>
+    <label><input type="checkbox" value="Ear Pain" /> Ear Pain</label>
+    <label><input type="checkbox" value="Blurred Vision" /> Blurred Vision</label>
+    <label><input type="checkbox" value="Palpitations" /> Palpitations</label>
+    <label><input type="checkbox" value="Fainting" /> Fainting</label>
+
+    <button onclick="evaluateSymptoms()">Check Condition</button>
+    <div class="result" id="conditionResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>🧠 Mental Wellness</h2>
+    <label>Mood:</label>
+    <select id="mood" onchange="checkMentalWellness()">
+      <option value="Happy">😊 Happy</option>
+      <option value="Okay">😐 Okay</option>
+      <option value="Stressed">😣 Stressed</option>
+    </select>
+    <div class="bar">
+      <div id="moodBar" class="bar-fill" style="width:100%"></div>
+    </div>
+
+    <label>Sleep Duration (hrs):</label>
+    <input type="range" id="sleep" min="0" max="24" value="8" oninput="checkMentalWellness()" />
+    <div class="bar">
+      <div id="sleepBar" class="bar-fill" style="width:33%; background:#76c7c0;"></div>
+    </div>
+
+    <div class="result" id="mentalMessage"></div>
+  </div>
+
+  <div class="section">
+    <h2>🩺 General Health Check-Up</h2>
+    <input type="number" id="bp" placeholder="Blood Pressure (e.g., 120)" />
+    <input type="number" id="sugar" placeholder="Sugar Level (mg/dL)" />
+    <input type="number" id="heartrate" placeholder="Heart Rate (bpm)" />
+    <select id="vision">
+      <option value="">Do you have any vision issues?</option>
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+    <button onclick="evaluateGeneralCheckup()">Check General Health</button>
+    <div class="result" id="generalResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>📄 Download Report</h2>
+    <button onclick="generateReport()">Download PDF</button>
+  </div>
+
+  <div class="section">
+    <h2>🧭 Hospital Locator</h2>
+    <a href="https://www.google.com/maps/search/hospitals+near+me" target="_blank">
+      <button>Find Hospitals Near Me</button>
+    </a>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    function calculateBMI() {
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const result = document.getElementById("bmiResult");
+      if (height && weight) {
+        const bmi = weight / ((height / 100) ** 2);
+        let status = '';
+        if (bmi < 18.5) status = 'Underweight';
+        else if (bmi < 24.9) status = 'Normal';
+        else if (bmi < 29.9) status = 'Overweight';
+        else status = 'Obese';
+        result.innerText = `BMI: ${bmi.toFixed(2)} (${status})`;
+      } else {
+        result.innerText = '';
+      }
+    }
+
+    const symptomMap = {
+      "Fever": { condition: "Viral Infection", medicine: "Paracetamol" },
+      "Cough": { condition: "Cold", medicine: "Cetirizine" },
+      "Headache": { condition: "Migraine", medicine: "Ibuprofen" },
+      "Sore Throat": { condition: "Throat Infection", medicine: "Salt Gargle" },
+      "Fatigue": { condition: "Anemia", medicine: "Iron Supplements" },
+      "Nausea": { condition: "Food Poisoning", medicine: "Domperidone" },
+      "Vomiting": { condition: "Stomach Infection", medicine: "Ondansetron" },
+      "Diarrhea": { condition: "Stomach Flu", medicine: "ORS" },
+      "Chest Pain": { condition: "Acidity", medicine: "Antacid" },
+      "Shortness of Breath": { condition: "Asthma", medicine: "Inhaler" },
+      "Skin Rash": { condition: "Allergy", medicine: "Antihistamine" },
+      "Back Pain": { condition: "Muscle Strain", medicine: "Pain Relief Gel" },
+      "Dizziness": { condition: "Low BP", medicine: "Electrolyte Solution" },
+      "Loss of Appetite": { condition: "Indigestion", medicine: "Digestive Enzyme" },
+      "Joint Pain": { condition: "Arthritis", medicine: "Painkiller" },
+      "Abdominal Pain": { condition: "Gastritis", medicine: "Antacid" },
+      "Constipation": { condition: "Constipation", medicine: "Laxative" },
+      "Runny Nose": { condition: "Allergic Rhinitis", medicine: "Antihistamine" },
+      "Sneezing": { condition: "Common Cold", medicine: "Cetirizine" },
+      "Itchy Eyes": { condition: "Eye Allergy", medicine: "Eye Drops" },
+      "Swollen Glands": { condition: "Infection", medicine: "Antibiotics" },
+      "Muscle Aches": { condition: "Flu", medicine: "Paracetamol" },
+      "Ear Pain": { condition: "Ear Infection", medicine: "Ear Drops" },
+      "Blurred Vision": { condition: "Eye Strain", medicine: "Rest + Eye Drops" },
+      "Palpitations": { condition: "Anxiety", medicine: "Relaxation + Consult Doctor" },
+      "Fainting": { condition: "Dehydration", medicine: "ORS" }
+    };
+
+    function evaluateSymptoms() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+      const selectedSymptoms = Array.from(checkboxes).map(cb => cb.value);
+
+      if (selectedSymptoms.length === 0) {
+        document.getElementById("conditionResult").innerText = "⚠️ Please select at least one symptom.";
+        return;
+      }
+
+      const resultMap = {};
+      selectedSymptoms.forEach(symptom => {
+        const entry = symptomMap[symptom];
+        if (entry) {
+          const key = entry.condition;
+          if (!resultMap[key]) {
+            resultMap[key] = new Set();
+          }
+          resultMap[key].add(entry.medicine);
+        }
+      });
+
+      let resultText = `🩺 Conditions Detected:\n`;
+      for (let condition in resultMap) {
+        const medicines = Array.from(resultMap[condition]).join(", ");
+        resultText += `• ${condition} → 💊 ${medicines}\n`;
+      }
+
+      let severity = "Low";
+      if (selectedSymptoms.length >= 5) severity = "High";
+      else if (selectedSymptoms.length >= 3) severity = "Moderate";
+
+      resultText += `\n🔴 Severity Level: ${severity}`;
+      document.getElementById("conditionResult").innerText = resultText;
+    }
+
+    function checkMentalWellness() {
+      const mood = document.getElementById("mood").value;
+      const sleep = parseInt(document.getElementById("sleep").value);
+      const moodBar = document.getElementById("moodBar");
+      const sleepBar = document.getElementById("sleepBar");
+
+      let moodColor = '#76c7c0';
+      if (mood === "Okay") moodColor = 'orange';
+      else if (mood === "Stressed") moodColor = 'red';
+      moodBar.style.background = moodColor;
+
+      sleepBar.style.width = `${(sleep / 24) * 100}%`;
+      sleepBar.style.background = sleep < 6 ? 'red' : (sleep < 8 ? 'orange' : '#76c7c0');
+
+      let msg = '';
+      if (mood === "Stressed" || sleep < 5) {
+        msg = "Take a deep breath. You’re doing great!";
+      } else if (sleep > 9) {
+        msg = "You're well rested. Keep up the good habits!";
+      } else {
+        msg = "Stay balanced. Health is wealth!";
+      }
+
+      document.getElementById("mentalMessage").innerText = msg;
+    }
+
+    function evaluateGeneralCheckup() {
+      const bp = parseInt(document.getElementById("bp").value);
+      const sugar = parseInt(document.getElementById("sugar").value);
+      const hr = parseInt(document.getElementById("heartrate").value);
+      const vision = document.getElementById("vision").value;
+      let msg = "";
+
+      if (bp > 140) msg += "High blood pressure. ";
+      else if (bp < 90) msg += "Low blood pressure. ";
+      else msg += "Blood pressure normal. ";
+
+      if (sugar > 180) msg += "High sugar level. ";
+      else if (sugar < 70) msg += "Low sugar level. ";
+      else msg += "Sugar level normal. ";
+
+      if (hr > 100) msg += "High heart rate. ";
+      else if (hr < 60) msg += "Low heart rate. ";
+      else msg += "Heart rate normal. ";
+
+      if (vision === "Yes") msg += "Vision issues detected.";
+      else msg += "No vision issues reported.";
+
+      document.getElementById("generalResult").innerText = msg;
+    }
+
+    async function generateReport() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const name = document.getElementById("name").value || "N/A";
+      const age = document.getElementById("age").value || "N/A";
+      const bmi = document.getElementById("bmiResult").innerText || "N/A";
+      const symptoms = document.getElementById("conditionResult").innerText || "None";
+      const mental = document.getElementById("mentalMessage").innerText || "None";
+      const general = document.getElementById("generalResult").innerText || "None";
+
+      doc.text("Health Report", 10, 10);
+      doc.text(`Name: ${name}`, 10, 20);
+      doc.text(`Age: ${age}`, 10, 30);
+      doc.text(`${bmi}`, 10, 40);
+      doc.text(`Symptoms & Condition:\n${symptoms}`, 10, 60);
+      doc.text(`Mental Wellness:\n${mental}`, 10, 100);
+      doc.text(`General Health Check:\n${general}`, 10, 140);
+
+      doc.save("health_report.pdf");
+    }
+  </script>
+</body>
+</html>
