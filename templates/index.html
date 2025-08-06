@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Check App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    .section {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input, select {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .result {
+      font-weight: bold;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+    .bar {
+      height: 20px;
+      width: 100%;
+      background: #eee;
+      border-radius: 10px;
+      margin: 10px 0;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .checkbox-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .checkbox-container label {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+    }
+    .checkbox-container input[type="checkbox"] {
+      width: auto;
+      margin-right: 8px;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+    .loading {
+      color: #007bff;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="section">
+    <h2>👤 Personal Info</h2>
+    <input type="text" id="name" placeholder="Name" />
+    <input type="number" id="age" placeholder="Age" />
+    <input type="number" id="height" placeholder="Height (cm)" oninput="calculateBMI()"/>
+    <input type="number" id="weight" placeholder="Weight (kg)" oninput="calculateBMI()"/>
+    <div class="result" id="bmiResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>🤒 Select Your Symptoms</h2>
+    <div class="checkbox-container">
+      <label><input type="checkbox" value="Fever" /> Fever</label>
+      <label><input type="checkbox" value="Cough" /> Cough</label>
+      <label><input type="checkbox" value="Headache" /> Headache</label>
+      <label><input type="checkbox" value="Sore Throat" /> Sore Throat</label>
+      <label><input type="checkbox" value="Fatigue" /> Fatigue</label>
+      <label><input type="checkbox" value="Nausea" /> Nausea</label>
+      <label><input type="checkbox" value="Vomiting" /> Vomiting</label>
+      <label><input type="checkbox" value="Diarrhea" /> Diarrhea</label>
+      <label><input type="checkbox" value="Chest Pain" /> Chest Pain</label>
+      <label><input type="checkbox" value="Shortness of Breath" /> Shortness of Breath</label>
+      <label><input type="checkbox" value="Skin Rash" /> Skin Rash</label>
+      <label><input type="checkbox" value="Back Pain" /> Back Pain</label>
+      <label><input type="checkbox" value="Dizziness" /> Dizziness</label>
+      <label><input type="checkbox" value="Loss of Appetite" /> Loss of Appetite</label>
+      <label><input type="checkbox" value="Joint Pain" /> Joint Pain</label>
+      <label><input type="checkbox" value="Abdominal Pain" /> Abdominal Pain</label>
+      <label><input type="checkbox" value="Constipation" /> Constipation</label>
+      <label><input type="checkbox" value="Runny Nose" /> Runny Nose</label>
+      <label><input type="checkbox" value="Sneezing" /> Sneezing</label>
+      <label><input type="checkbox" value="Itchy Eyes" /> Itchy Eyes</label>
+      <label><input type="checkbox" value="Swollen Glands" /> Swollen Glands</label>
+      <label><input type="checkbox" value="Muscle Aches" /> Muscle Aches</label>
+      <label><input type="checkbox" value="Ear Pain" /> Ear Pain</label>
+      <label><input type="checkbox" value="Blurred Vision" /> Blurred Vision</label>
+      <label><input type="checkbox" value="Palpitations" /> Palpitations</label>
+      <label><input type="checkbox" value="Fainting" /> Fainting</label>
+    </div>
+
+    <button onclick="evaluateSymptoms()">Check Condition</button>
+    <div class="result" id="conditionResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>🧠 Mental Wellness</h2>
+    <label>Mood:</label>
+    <select id="mood" onchange="checkMentalWellness()">
+      <option value="Happy">😊 Happy</option>
+      <option value="Okay">😐 Okay</option>
+      <option value="Stressed">😣 Stressed</option>
+    </select>
+    <div class="bar">
+      <div id="moodBar" class="bar-fill" style="width:100%; background:#76c7c0;"></div>
+    </div>
+
+    <label>Sleep Duration (hrs): <span id="sleepValue">8</span></label>
+    <input type="range" id="sleep" min="0" max="24" value="8" oninput="checkMentalWellness()" />
+    <div class="bar">
+      <div id="sleepBar" class="bar-fill" style="width:33%; background:#76c7c0;"></div>
+    </div>
+
+    <div class="result" id="mentalMessage"></div>
+  </div>
+
+  <div class="section">
+    <h2>🩺 General Health Check-Up</h2>
+    <input type="number" id="bp" placeholder="Blood Pressure (e.g., 120)" />
+    <input type="number" id="sugar" placeholder="Sugar Level (mg/dL)" />
+    <input type="number" id="heartrate" placeholder="Heart Rate (bpm)" />
+    <select id="vision">
+      <option value="">Do you have any vision issues?</option>
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+    <button onclick="evaluateGeneralCheckup()">Check General Health</button>
+    <div class="result" id="generalResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>📄 Download Report</h2>
+    <button onclick="generateReport()">Download PDF Report</button>
+    <div class="result" id="reportResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>🧭 Hospital Locator</h2>
+    <input type="text" id="location" placeholder="Enter your location (e.g., New York)" />
+    <button onclick="findHospitals()">Find Hospitals Near Me</button>
+    <div class="result" id="hospitalResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>💊 Medicine Reminder</h2>
+    <input type="text" id="medicineName" placeholder="Medicine Name" />
+    <input type="time" id="medicineTime" />
+    <button onclick="setReminder()">Set Reminder</button>
+    <div class="result" id="reminderResult"></div>
+  </div>
+
+  <script>
+    // Global variables
+    let currentRiskLevel = 'Low';
+
+    function calculateBMI() {
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const result = document.getElementById("bmiResult");
+      
+      if (height && weight) {
+        const bmi = weight / ((height / 100) ** 2);
+        let status = '';
+        if (bmi < 18.5) status = 'Underweight';
+        else if (bmi < 24.9) status = 'Normal';
+        else if (bmi < 29.9) status = 'Overweight';
+        else status = 'Obese';
+        result.innerHTML = `BMI: ${bmi.toFixed(2)} (${status})`;
+      } else {
+        result.innerHTML = '';
+      }
+    }
+
+    async function evaluateSymptoms() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+      const selectedSymptoms = Array.from(checkboxes).map(cb => cb.value);
+      const resultDiv = document.getElementById("conditionResult");
+
+      if (selectedSymptoms.length === 0) {
+        resultDiv.innerHTML = "⚠️ Please select at least one symptom.";
+        return;
+      }
+
+      resultDiv.innerHTML = '<span class="loading">Analyzing symptoms...</span>';
+
+      try {
+        // Get diagnosis from backend
+        const diagnoseResponse = await fetch('/diagnose', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ symptoms: selectedSymptoms })
+        });
+
+        // Get risk classification from backend
+        const riskResponse = await fetch('/classify-risk', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ symptoms: selectedSymptoms })
+        });
+
+        if (diagnoseResponse.ok && riskResponse.ok) {
+          const diagnoseData = await diagnoseResponse.json();
+          const riskData = await riskResponse.json();
+          
+          currentRiskLevel = riskData.risk;
+          
+          let resultText = '🩺 Analysis Results:\n\n';
+          
+          // Group by condition
+          const conditionMap = {};
+          diagnoseData.results.forEach(item => {
+            if (!conditionMap[item.condition]) {
+              conditionMap[item.condition] = [];
+            }
+            conditionMap[item.condition].push(item.medicine);
+          });
+
+          for (let condition in conditionMap) {
+            const medicines = [...new Set(conditionMap[condition])].join(", ");
+            resultText += `• ${condition} → 💊 ${medicines}\n`;
+          }
+
+          resultText += `\n🔴 Risk Level: ${currentRiskLevel}`;
+          
+          if (currentRiskLevel === 'High') {
+            resultText += '\n⚠️ Consider consulting a healthcare professional immediately.';
+          } else if (currentRiskLevel === 'Medium') {
+            resultText += '\n⚠️ Monitor symptoms and consider medical consultation.';
+          }
+
+          resultDiv.innerHTML = resultText;
+        } else {
+          throw new Error('Failed to get diagnosis');
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    }
+
+    function checkMentalWellness() {
+      const mood = document.getElementById("mood").value;
+      const sleep = parseInt(document.getElementById("sleep").value);
+      const moodBar = document.getElementById("moodBar");
+      const sleepBar = document.getElementById("sleepBar");
+      const sleepValue = document.getElementById("sleepValue");
+
+      sleepValue.textContent = sleep;
+
+      let moodColor = '#76c7c0';
+      if (mood === "Okay") moodColor = 'orange';
+      else if (mood === "Stressed") moodColor = 'red';
+      moodBar.style.background = moodColor;
+
+      sleepBar.style.width = `${(sleep / 24) * 100}%`;
+      sleepBar.style.background = sleep < 6 ? 'red' : (sleep < 8 ? 'orange' : '#76c7c0');
+
+      let msg = '';
+      if (mood === "Stressed" || sleep < 5) {
+        msg = "🧘‍♀️ Take a deep breath. Consider relaxation techniques. You're doing great!";
+      } else if (sleep > 9) {
+        msg = "😴 You're well rested. Keep up the good sleep habits!";
+      } else {
+        msg = "✨ Stay balanced. Health is wealth!";
+      }
+
+      document.getElementById("mentalMessage").innerHTML = msg;
+    }
+
+    function evaluateGeneralCheckup() {
+      const bp = parseInt(document.getElementById("bp").value);
+      const sugar = parseInt(document.getElementById("sugar").value);
+      const hr = parseInt(document.getElementById("heartrate").value);
+      const vision = document.getElementById("vision").value;
+      let msg = "";
+
+      if (bp > 140) msg += "⚠️ High blood pressure detected. ";
+      else if (bp < 90) msg += "⚠️ Low blood pressure detected. ";
+      else if (bp) msg += "✅ Blood pressure normal. ";
+
+      if (sugar > 180) msg += "⚠️ High sugar level detected. ";
+      else if (sugar < 70) msg += "⚠️ Low sugar level detected. ";
+      else if (sugar) msg += "✅ Sugar level normal. ";
+
+      if (hr > 100) msg += "⚠️ High heart rate detected. ";
+      else if (hr < 60) msg += "⚠️ Low heart rate detected. ";
+      else if (hr) msg += "✅ Heart rate normal. ";
+
+      if (vision === "Yes") msg += "👁️ Vision issues reported.";
+      else if (vision === "No") msg += "✅ No vision issues reported.";
+
+      document.getElementById("generalResult").innerHTML = msg;
+    }
+
+    async function generateReport() {
+      const name = document.getElementById("name").value || "N/A";
+      const age = document.getElementById("age").value || "N/A";
+      const resultDiv = document.getElementById("reportResult");
+
+      resultDiv.innerHTML = '<span class="loading">Generating report...</span>';
+
+      try {
+        const response = await fetch('/generate-report', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            age: age,
+            risk_level: currentRiskLevel
+          })
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = 'health_report.pdf';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          resultDiv.innerHTML = '<span class="success">✅ Report downloaded successfully!</span>';
+        } else {
+          throw new Error('Failed to generate report');
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    }
+
+    async function findHospitals() {
+      const location = document.getElementById("location").value || "your location";
+      const resultDiv = document.getElementById("hospitalResult");
+
+      resultDiv.innerHTML = '<span class="loading">Finding hospitals...</span>';
+
+      try {
+        const response = await fetch('/find-hospitals', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ location: location })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          resultDiv.innerHTML = `<a href="${data.map_url}" target="_blank" style="color: #007bff; text-decoration: none;">🏥 Click here to find hospitals near ${location}</a>`;
+        } else {
+          throw new Error('Failed to find hospitals');
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    }
+
+    async function setReminder() {
+      const medicineName = document.getElementById("medicineName").value;
+      const medicineTime = document.getElementById("medicineTime").value;
+      const resultDiv = document.getElementById("reminderResult");
+
+      if (!medicineName || !medicineTime) {
+        resultDiv.innerHTML = '<span class="error">Please enter both medicine name and time.</span>';
+        return;
+      }
+
+      try {
+        const response = await fetch('/set_reminder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            medicines: [{ name: medicineName, time: medicineTime }]
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          resultDiv.innerHTML = `<span class="success">✅ ${data.status}</span>`;
+          document.getElementById("medicineName").value = '';
+          document.getElementById("medicineTime").value = '';
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to set reminder');
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    }
+
+    // Initialize mental wellness on page load
+    checkMentalWellness();
+  </script>
+</body>
+</html>
